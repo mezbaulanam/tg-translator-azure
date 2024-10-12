@@ -1,4 +1,27 @@
 {
+  "name": "tg-translator-azure",
+  "version": "1.0.0",
+  "description": "A Telegram bot that translates text using Azure AI Translator API and tracks usage statistics.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "prod": "pm2 start index.js --name tg-translator-azure"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mezbaulanam/tg-translator-azure.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "translator",
+    "azure",
+    "ai",
+    "translation"
+  ],
+  "author": "Mezbaul Anam",
+  "license": "MIT",
   "dependencies": {
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",

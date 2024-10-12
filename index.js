@@ -86,7 +86,7 @@ async function translateText(text, to, from = '') {
   }
 }
 
-// Function to send a stylish response
+// Function to send a response with styled markdown
 function sendStylishResponse(chatId, originalText, translatedText, fromLang, toLang) {
   const responseMessage = `
 *Translation Result*:

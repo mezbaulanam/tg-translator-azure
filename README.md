@@ -39,7 +39,7 @@ A simple experimental Telegram bot that translates text between languages using 
 
 4. Start the bot:
     ```sh
-    node index.js
+    npm start
     ```
 
 
@@ -121,3 +121,8 @@ A simple experimental Telegram bot that translates text between languages using 
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contribution
+Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines on how to contribute to this project.
+
+If you have any questions or need further assistance, feel free to open an issue or start a discussion in the repository.
