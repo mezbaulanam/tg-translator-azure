@@ -1,7 +1,7 @@
 # Telegram Translator Bot
 
 A simple experimental Telegram bot that translates text between languages using the Azure AI Translator API. This bot also tracks usage statistics using MongoDB and provides various commands for users to interact with.
-    ### Please star the repo if you like it :)
+### Please star the repo if you like it :)
 ## Features
 
 - Detects the language of the input text and translates it to English.
