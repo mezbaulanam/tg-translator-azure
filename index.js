@@ -24,8 +24,18 @@ const statsSchema = new mongoose.Schema({
   languageCounts: { type: Map, of: Number, default: {} }
 });
 
+const translationHistorySchema = new mongoose.Schema({
+  username: String,
+  originalText: String,
+  translatedText: String,
+  fromLang: String,
+  toLang: String,
+  date: { type: Date, default: Date.now }
+});
+
 const Feedback = mongoose.model('Feedback', feedbackSchema);
 const Stats = mongoose.model('Stats', statsSchema);
+const TranslationHistory = mongoose.model('TranslationHistory', translationHistorySchema);
 
 // Azure Translator API details
 const azureEndpoint = 'https://api.cognitive.microsofttranslator.com';
@@ -60,7 +70,7 @@ async function detectLanguage(text) {
 }
 
 // Function to translate text
-async function translateText(text, to, from = '') {
+async function translateText(text, to, from = '', username) {
   try {
     const response = await axios({
       baseURL: azureEndpoint,
@@ -80,10 +90,25 @@ async function translateText(text, to, from = '') {
       }],
       responseType: 'json'
     });
-    return response.data[0].translations[0].text;
+    const translatedText = response.data[0].translations[0].text;
+    await HistorySave(username, text, translatedText, from, to);
+    
+    return translatedText;
   } catch (error) {
     throw new Error('Error translating text');
   }
+}
+
+// Function to save translation history
+async function HistorySave(username, originalText, translatedText, fromLang, toLang) {
+  const historyEntry = new TranslationHistory({
+    username: username,
+    originalText: originalText,
+    translatedText: translatedText,
+    fromLang: fromLang,
+    toLang: toLang
+  });
+  await historyEntry.save();
 }
 
 // Function to send a response with styled markdown
@@ -178,6 +203,11 @@ async function sendTopLanguages(chatId) {
   bot.sendMessage(chatId, topLanguagesMessage, { parse_mode: 'Markdown' });
 }
 
+// Delete translation history for a user
+async function deleteTranslationHistory(username) {
+  await TranslationHistory.deleteMany({ username: username });
+}
+
 // Listen for commands
 bot.on('message', async (msg) => {
   const chatId = msg.chat.id;
@@ -187,7 +217,7 @@ bot.on('message', async (msg) => {
     const message = text.slice(11);
     try {
       const detectedLang = await detectLanguage(message);
-      const translatedText = await translateText(message, 'en', detectedLang);
+      const translatedText = await translateText(message, 'en', detectedLang, msg.from.username);
       sendStylishResponse(chatId, message, translatedText, detectedLang, 'en');
       updateUsageStats(detectedLang, 'en');
     } catch (error) {
@@ -204,7 +234,7 @@ bot.on('message', async (msg) => {
     }
 
     try {
-      const translatedText = await translateText(message, langCode, 'en');
+      const translatedText = await translateText(message, langCode, 'en', msg.from.username);
       sendStylishResponse(chatId, message, translatedText, 'en', langCode);
       updateUsageStats('en', langCode);
     } catch (error) {
@@ -220,6 +250,8 @@ bot.on('message', async (msg) => {
 - Use \`/languages\` to see the list of supported languages.
 - Use \`/feedback <message>\` to send feedback.
 - Use \`/top_languages\` to see the top translated languages.
+- Use \`/history\` to see your translation history.
+- Use \`/delete_history\` to delete your translation history.
     `;
     bot.sendMessage(chatId, helpMessage, { parse_mode: 'Markdown' });
   } else if (text.startsWith('/stats')) {
@@ -233,6 +265,20 @@ bot.on('message', async (msg) => {
     bot.sendMessage(chatId, 'Thank you for your feedback!');
   } else if (text.startsWith('/top_languages')) {
     sendTopLanguages(chatId);
+  } else if (text.startsWith('/history')) {
+    const history = await TranslationHistory.find({ username: msg.from.username }).sort({ date: -1 }).limit(10);
+    if (history.length === 0) {
+      bot.sendMessage(chatId, 'No translation history found.');
+    } else {
+      let historyMessage = '*Translation History*:\n';
+      history.forEach(entry => {
+        historyMessage += `\n*Original*: ${entry.originalText}\n*Translated*: ${entry.translatedText}\n*From*: ${entry.fromLang}\n*To*: ${entry.toLang}\n*Date*: ${entry.date}\n`;
+      });
+      bot.sendMessage(chatId, historyMessage, { parse_mode: 'Markdown' });
+    }
+  } else if (text.startsWith('/delete_history')) {
+    await deleteTranslationHistory(msg.from.username);
+    bot.sendMessage(chatId, 'Your translation history has been deleted.');
   } else {
     bot.sendMessage(chatId, 'Invalid command. Use /help to see the list of available commands.');
   }
