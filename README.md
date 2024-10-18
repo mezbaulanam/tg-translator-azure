@@ -44,21 +44,28 @@ A simple experimental Telegram bot that translates text between languages using 
     npm start
     ```
 
-
 ## Usage
 
 ### Commands
 
 - **/translate `<text>`**: Detects the language of the input text and translates it to English.
+  - Example: `/translate Hola, ¿cómo estás?`
 - **/translate_to `<lang_code>` `<text>`**: Translates the input text from English to the specified language.
   - Example: `/translate_to bn Hello, how are you?`
 - **/stats**: Displays usage statistics including total translations and system statistics.
+  - Example: `/stats`
 - **/languages**: Lists all supported languages.
+  - Example: `/languages`
 - **/feedback `<message>`**: Sends feedback to the bot developers.
+  - Example: `/feedback This bot is amazing!`
 - **/top_languages**: Displays the top translated languages.
+  - Example: `/top_languages`
 - **/help**: Shows the list of available commands.
+  - Example: `/help`
 - **/history**: Retrieves and displays the user's translation history.
+  - Example: `/history`
 - **/delete_history**: Deletes the user's translation history.
+  - Example: `/delete_history`
 
 ### Example
 
@@ -90,6 +97,21 @@ A simple experimental Telegram bot that translates text between languages using 
 6. **Get top translated languages**:
     ```
     /top_languages
+    ```
+
+7. **Get help**:
+    ```
+    /help
+    ```
+
+8. **Get translation history**:
+    ```
+    /history
+    ```
+
+9. **Delete translation history**:
+    ```
+    /delete_history
     ```
 
 ## Code Overview
