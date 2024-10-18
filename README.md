@@ -10,6 +10,8 @@ A simple experimental Telegram bot that translates text between languages using 
 - Lists supported languages.
 - Tracks and displays the top translated languages.
 - Allows users to send feedback.
+- Tracks and displays the user's translation history.
+- Allows users to delete their translation history.
 
 ## Prerequisites
 
@@ -55,6 +57,8 @@ A simple experimental Telegram bot that translates text between languages using 
 - **/feedback `<message>`**: Sends feedback to the bot developers.
 - **/top_languages**: Displays the top translated languages.
 - **/help**: Shows the list of available commands.
+- **/history**: Retrieves and displays the user's translation history.
+- **/delete_history**: Deletes the user's translation history.
 
 ### Example
 
